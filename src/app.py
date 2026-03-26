@@ -1,10 +1,10 @@
-import src.pydanticModels as pydanticModels
-import src.laureatePydanticModel as laureateModels
+import src.pydantic_models as pydantic_models
+import src.laureate_pydantic_models as laureateModels
 import json
 from flask import Response, request
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask_cors import CORS
-import src.apiRequest as apiRequest
+import src.api_request as api_request
 from src.params import NobelParams, LaureateParams
 from datetime import date
 
@@ -23,9 +23,9 @@ nobel_tag = Tag(name="Nobel", description="Operações relacionadas a Nobel")
     "/exactSciences",
     tags=[nobel_tag],
     responses={
-        200: pydanticModels.NobelResponse,
-        404: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse,
+        200: pydantic_models.NobelResponse,
+        404: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse,
     }
 )
 def get_science_nobels():
@@ -38,12 +38,12 @@ def get_science_nobels():
         nobelPrizeYear = current_year - 10,
         yearTo = current_year
             )
-        nobelsche, status = apiRequest.nobel(params)
+        nobelsche, status = api_request.nobel(params)
         if status == 200:
             params.nobelPrizeCategory = "phy"
-            nobelsPhy, status = apiRequest.nobel(params)
+            nobelsPhy, status = api_request.nobel(params)
             nobels = {**nobelsche, **nobelsPhy}
-        parsed = pydanticModels.NobelResponse(**nobels)
+        parsed = pydantic_models.NobelResponse(**nobels)
             
         if not parsed:
             return Response(
@@ -67,16 +67,16 @@ def get_science_nobels():
     "/nobelByCategory",
     tags=[nobel_tag],
     responses={
-        200: pydanticModels.NobelPrize,
-        404: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse
+        200: pydantic_models.NobelPrize,
+        404: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse
     }
 )
-def get_nobels_by_category(query: pydanticModels.CategoryQuery):
+def get_nobels_by_category(query: pydantic_models.CategoryQuery):
     """Retorna os prêmios nobels por categoria e ano"""
     try:
-        nobels, status = apiRequest.nobelByCategory(query.category, query.year)
-        parsed = pydanticModels.NobelPrize(**nobels[0])
+        nobels, status = api_request.nobelByCategory(query.category, query.year)
+        parsed = pydantic_models.NobelPrize(**nobels[0])
         if not nobels:
             return Response(
                 json.dumps({"message": "Nenhum Prêmio encontrado"}, ensure_ascii=False),
@@ -99,8 +99,8 @@ def get_nobels_by_category(query: pydanticModels.CategoryQuery):
     tags=[nobel_tag],
     responses={
         200: laureateModels.LaureateResponse,
-        404: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse
+        404: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse
     }
 )
 def get_laureates():
@@ -111,7 +111,7 @@ def get_laureates():
             nobelPrizeYear = current_year - 10,
             yearTo = current_year
         )
-        laureates, status = apiRequest.laureates(params)
+        laureates, status = api_request.laureates(params)
 
         if not laureates:
             return Response(
@@ -134,14 +134,14 @@ def get_laureates():
     tags=[nobel_tag],
     responses={
         200: laureateModels.LaureateIdResponse,
-        404: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse
+        404: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse
     }
 )
-def get_laureates_by_id(query: pydanticModels.LaureateQuery):
+def get_laureates_by_id(query: pydantic_models.LaureateQuery):
     """Retorna os ganhadores do prêmio nobel pelo ID"""
     try:
-        laureate, status = apiRequest.laureatesById(query.id)
+        laureate, status = api_request.laureatesById(query.id)
 
         if not laureate:
             return Response(
@@ -165,18 +165,18 @@ def get_laureates_by_id(query: pydanticModels.LaureateQuery):
     tags=[nobel_tag],
     responses={
         200: laureateModels.LaureateIdsResponse,
-        404: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse
+        404: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse
     }
 )
 
-def get_laureate_by_ids(query: pydanticModels.LaureateParams):
+def get_laureate_by_ids(query: pydantic_models.LaureateParams):
     """Retorna mutiplos ganhadores por ids"""
     try:
         data = []
         ids = request.args.getlist("ids") 
         for id in ids:
-            laureate, status = apiRequest.laureatesById(id)
+            laureate, status = api_request.laureatesById(id)
             laureate = laureateModels.LaureateIdResponse(**laureate)
             data.append(laureate.model_dump())
 
