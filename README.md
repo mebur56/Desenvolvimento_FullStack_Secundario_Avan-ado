@@ -1,17 +1,22 @@
-# MVP Desenvolvimento FullStack Avançado API principal
+# MVP Desenvolvimento FullStack Avançado API Secundária
 
 ## Ganhadores
-API para gerenciamento de ganhadores de nobel favoritos 
+API para buscar e lidar com dados de prêmios nobels de API externa
 
 ### Arrquitetura
 ![](architetureIMG.jpg)
 
 ### API Externa
-O projeto utiliza uma API externa disponivél em:
+O projeto utiliza uma API externa com documentação disponivél em:
 [API Externa](https://app.swaggerhub.com/apis/NobelMedia/NobelMasterData/2.1#/)
 
-A API é gratuita e não necessita de cadastro
+A API externa é gratuita e não necessita de cadastro
+foram utilizadas as quatro rotas disponivéis
 
+- /nobelPrizes
+- /nobelPrize/{category}/{year}
+- /laureates
+- /laureates/{laureateID}
 
 
 ## Execução sem docker
@@ -30,17 +35,11 @@ Navegue até a pasta src em um terminal e execute:
 ```
 python -m pip install -r .\requirements.txt
 ```
-Após a instalação dos pacotes com sucesso basta executar:
-```
-python -m flask run
-```
-ou para definir a porta execute:
+Após a instalação dos pacotes com sucesso execute na porta padrão que a API principal espera
 
 ```
-python -m flask run --host=0.0.0.0 --port=5000
+python -m flask run --host=0.0.0.0 --port=4000
 ```
-
-O banco SQLite tem suas tabelas inicializadas via código ao iniciar a API, não é necessária nenhuma ação
 
 ## Execução com docker
 
@@ -61,21 +60,21 @@ O banco SQLite tem suas tabelas inicializadas via código ao iniciar a API, não
 Para construir a imagem execute o comando
 
 ```
-docker build -t api-principal .
+docker build -t api-secundaria .
 ```
 
 Para executar a imagem execute
 
 ```
-docker run -p 5000:5000 --env-file .env api-principal
+docker run -p 4000:4000 --env-file .env api-secundaria
 ```
-A porta padrão é 5000, caso deseje executar em outra porta edite o arquivo DockerFile e o comando de execução de acordo
+A porta padrão é 4000, caso deseje executar em outra porta edite o arquivo DockerFile e o comando de execução de acordo
 
 ### Informações adicionais
 
 O projeto contém a documentação swagger disponível na url
 
-http://localhost:5000/openapi/swagger
+http://localhost:4000/openapi/swagger
 
 ou 
 
